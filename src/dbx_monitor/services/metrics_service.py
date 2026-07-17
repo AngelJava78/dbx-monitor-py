@@ -4,23 +4,40 @@ import pandas as pd
 
 
 def calculate_duration_metrics(jobs_df: pd.DataFrame) -> dict:
-    if jobs_df.empty or "duration" not in jobs_df.columns:
+    try:
+        if jobs_df.empty or "duration" not in jobs_df.columns:
+            return {
+                "success_jobs": "0",
+                "failed_jobs": "0",
+                "duration_min": "00:00:00",
+                "duration_avg": "00:00:00",
+                "duration_max": "00:00:00",
+                "duration_sum": "00:00:00",
+            }
+
+        durations = jobs_df["duration"].apply(_to_timedelta)
+        durations = pd.to_timedelta(durations)
+        success_count = (jobs_df["result_state"] == "SUCCESS").sum()
+        failed_count = (jobs_df["result_state"] != "SUCCESS").sum()
+
         return {
+            "success_jobs": str(success_count),
+            "failed_jobs": str(failed_count),        
+            "duration_min": str(durations.min()).split(".")[0],
+            "duration_avg": str(durations.mean()).split(".")[0],
+            "duration_max": str(durations.max()).split(".")[0],
+            "duration_sum": str(durations.sum()).split(".")[0],
+        }
+    except:
+        return {
+            "success_jobs": "exception",
+            "failed_jobs": "0",
             "duration_min": "00:00:00",
             "duration_avg": "00:00:00",
             "duration_max": "00:00:00",
             "duration_sum": "00:00:00",
-        }
+        }     
 
-    durations = jobs_df["duration"].apply(_to_timedelta)
-    durations = pd.to_timedelta(durations)
-
-    return {
-        "duration_min": str(durations.min()).split(".")[0],
-        "duration_avg": str(durations.mean()).split(".")[0],
-        "duration_max": str(durations.max()).split(".")[0],
-        "duration_sum": str(durations.sum()).split(".")[0],
-    }
 
 
 def get_max_instances(cluster_df: pd.DataFrame) -> int:

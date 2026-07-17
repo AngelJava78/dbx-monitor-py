@@ -29,3 +29,12 @@ def format_jobs_for_grid(jobs_df: pd.DataFrame) -> pd.DataFrame:
         )
 
     return formatted_df
+
+def filter_jobs_by_state(jobs_df: pd.DataFrame, state_filter: str) -> pd.DataFrame:
+    if jobs_df is None or jobs_df.empty:
+        return pd.DataFrame()
+    
+    if not state_filter or state_filter == "ALL":
+        return jobs_df.copy()
+    
+    return jobs_df[jobs_df["result_state"] == state_filter].copy()

@@ -1,13 +1,14 @@
 from dash import dcc, html
 import dash_mantine_components as dmc
 
-from src.dbx_monitor.components.filters import create_date_filters
+from src.dbx_monitor.components.filters import create_filters
 from src.dbx_monitor.components.tables import build_column_defs, create_jobs_grid
 from src.dbx_monitor.repositories.jobs_repository import get_jobs
 
 
 def create_layout():
     jobs_df = get_jobs()
+
     column_defs = build_column_defs(jobs_df.columns)
 
     return html.Div(
@@ -16,7 +17,7 @@ def create_layout():
                 "Dashboard de Pruebas de volumen de Databricks",
                 order=1,
             ),
-            create_date_filters(),
+            create_filters(),
             html.Hr(),
             html.Div(
                 dcc.Graph(

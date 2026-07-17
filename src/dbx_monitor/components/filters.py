@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 
 from dash import html
 import dash_mantine_components as dmc
+from src.dbx_monitor.repositories.state_repository import get_state_list
+from src.dbx_monitor.components.states import get_state_options
 
 
 def get_default_date_range() -> tuple[str, str]:
@@ -12,8 +14,10 @@ def get_default_date_range() -> tuple[str, str]:
     return fecha_min.isoformat(), fecha_max.isoformat()
 
 
-def create_date_filters():
+def create_filters():
     fecha_min, fecha_max = get_default_date_range()
+    state_list = get_state_list()
+    state_options = get_state_options(state_list)
 
     return html.Div(
         [
@@ -23,7 +27,7 @@ def create_date_filters():
                     dmc.DateTimePicker(
                         id="fecha_inicio",
                         value=fecha_min,
-                        w=250,
+                        w=200,
                     ),
                 ],
                 style={
@@ -38,7 +42,24 @@ def create_date_filters():
                     dmc.DateTimePicker(
                         id="fecha_fin",
                         value=fecha_max,
-                        w=250,
+                        w=200,
+                    ),
+                ],
+                style={
+                    "display": "flex",
+                    "alignItems": "center",
+                    "gap": "10px",
+                },
+            ),
+            html.Div(
+                [
+                    dmc.Text("Result"),
+                    dmc.Select(
+                        id="state_filter",
+                        data=state_options,
+                        value="ALL",
+                        w=180,
+                        clearable=False,
                     ),
                 ],
                 style={
@@ -54,3 +75,4 @@ def create_date_filters():
             "alignItems": "center",
         },
     )
+
