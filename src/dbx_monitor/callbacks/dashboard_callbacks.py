@@ -8,7 +8,7 @@ from src.dbx_monitor.services.cluster_service import (
     filter_cluster_by_date,
     prepare_cluster_stack,
 )
-from src.dbx_monitor.services.jobs_service import filter_jobs_by_date, format_jobs_for_grid, filter_jobs_by_state
+from src.dbx_monitor.services.jobs_service import filter_jobs_by_date, format_jobs_for_grid, filter_jobs_by_state, filter_jobs_by_subprocess_id, filter_jobs_by_substage_id
 
 
 def register_dashboard_callbacks(app):
@@ -18,17 +18,30 @@ def register_dashboard_callbacks(app):
         Output("barra_estadisticas", "children"),
         Input("fecha_inicio", "value"),
         Input("fecha_fin", "value"),
-        Input("state_filter", "value")
+        Input("state_filter", "value"),
+        Input("subprocess_filter", "value"),
+        Input("substage_filter", "value")
     )
-    def actualizar_dashboard(inicio, fin, state_filter):
+    def actualizar_dashboard(inicio, fin, state, subprocess, substage):
         if not inicio or not fin:
             return create_empty_chart(), [], []
 
         jobs_df = get_jobs()
         cluster_df = get_cluster_usage()
 
-        jobs_by_date = filter_jobs_by_date(jobs_df, inicio, fin)
-        jobs_filtrado = filter_jobs_by_state(jobs_by_date, state_filter)
+        jobs_filtrado = filter_jobs_by_date(jobs_df, inicio, fin)
+        print(f"Stage: {state}")
+        jobs_filtrado = filter_jobs_by_state(jobs_filtrado, state)
+
+
+        subprocess_id = int(subprocess)
+        print(f"Subprocess: {subprocess_id}")
+        jobs_filtrado = filter_jobs_by_subprocess_id(jobs_filtrado, subprocess_id)
+
+        substage_id = int(substage)
+        print(f"Substage: {substage_id}")
+        jobs_filtrado = filter_jobs_by_substage_id(jobs_filtrado, substage_id)
+
         cluster_filtrado = filter_cluster_by_date(cluster_df, inicio, fin)
 
         cluster_stack = prepare_cluster_stack(cluster_filtrado)

@@ -38,3 +38,21 @@ def filter_jobs_by_state(jobs_df: pd.DataFrame, state_filter: str) -> pd.DataFra
         return jobs_df.copy()
     
     return jobs_df[jobs_df["result_state"] == state_filter].copy()
+
+def filter_jobs_by_subprocess_id(jobs_df: pd.DataFrame, subprocess_id: int) -> pd.DataFrame:
+    if jobs_df is None or jobs_df.empty:
+        return pd.DataFrame()
+    
+    if subprocess_id == 0:
+        return jobs_df.copy()
+    
+    return jobs_df[jobs_df["subproceso"] == subprocess_id].copy()
+
+def filter_jobs_by_substage_id(jobs_df: pd.DataFrame, substage_id: int) -> pd.DataFrame:
+    if jobs_df is None or jobs_df.empty:
+        return pd.DataFrame()
+    
+    if substage_id == 0:
+        return jobs_df.copy()
+    
+    return jobs_df[jobs_df["subetapa"] == substage_id].copy()
