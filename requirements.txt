@@ -1,0 +1,10 @@
+dash
+dash-mantine-components
+dash-ag-grid
+pandas
+plotly
+sqlalchemy
+psycopg2-binary
+python-dotenv
+openpyxl
+pytest

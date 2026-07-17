@@ -1,0 +1,31 @@
+import pandas as pd
+
+
+def filter_jobs_by_date(
+    jobs_df: pd.DataFrame,
+    start_date,
+    end_date,
+) -> pd.DataFrame:
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
+
+    return jobs_df[
+        (jobs_df["started_cdmx"] >= start_date)
+        & (jobs_df["started_cdmx"] <= end_date)
+    ].copy()
+
+
+def format_jobs_for_grid(jobs_df: pd.DataFrame) -> pd.DataFrame:
+    formatted_df = jobs_df.copy()
+
+    if "started_cdmx" in formatted_df.columns:
+        formatted_df["started_cdmx"] = formatted_df["started_cdmx"].dt.strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+
+    if "ended_cdmx" in formatted_df.columns:
+        formatted_df["ended_cdmx"] = formatted_df["ended_cdmx"].dt.strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+
+    return formatted_df
