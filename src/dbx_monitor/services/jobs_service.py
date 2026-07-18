@@ -46,7 +46,7 @@ def filter_jobs_by_subprocess_id(jobs_df: pd.DataFrame, subprocess_id: int) -> p
     if subprocess_id == 0:
         return jobs_df.copy()
     
-    return jobs_df[jobs_df["subproceso"] == subprocess_id].copy()
+    return jobs_df[jobs_df["subprocess_id"] == subprocess_id].copy()
 
 def filter_jobs_by_substage_id(jobs_df: pd.DataFrame, substage_id: int) -> pd.DataFrame:
     if jobs_df is None or jobs_df.empty:
@@ -55,4 +55,13 @@ def filter_jobs_by_substage_id(jobs_df: pd.DataFrame, substage_id: int) -> pd.Da
     if substage_id == 0:
         return jobs_df.copy()
     
-    return jobs_df[jobs_df["subetapa"] == substage_id].copy()
+    return jobs_df[jobs_df["substage_id"] == substage_id].copy()
+
+def filter_jobs_by_folio_number(jobs_df: pd.DataFrame, folio_number: str) -> pd.DataFrame:
+    if jobs_df is None or jobs_df.empty:
+        return pd.DataFrame()
+    
+    if folio_number is None or not str(folio_number).strip():
+        return jobs_df.copy()
+    
+    return jobs_df[jobs_df["folio_number"] == folio_number].copy()

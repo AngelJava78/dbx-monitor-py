@@ -13,16 +13,17 @@ from src.dbx_monitor.services.jobs_service import filter_jobs_by_date, format_jo
 
 def register_dashboard_callbacks(app):
     @app.callback(
-        Output("grafica_cluster", "figure"),
-        Output("tabla_jobs", "rowData"),
-        Output("barra_estadisticas", "children"),
-        Input("fecha_inicio", "value"),
-        Input("fecha_fin", "value"),
-        Input("state_filter", "value"),
+        Output("cluster_chart", "figure"),
+        Output("jobs_table", "rowData"),
+        Output("metrics_bar", "children"),
+        Input("start_date", "value"),
+        Input("end_date", "value"),
+        # Input("state_filter", "value"),
         Input("subprocess_filter", "value"),
         Input("substage_filter", "value")
     )
-    def actualizar_dashboard(inicio, fin, state, subprocess, substage):
+    def refresh_dashboard(inicio, fin, subprocess, substage):
+        print("*** Refresh dashboard ***")
         if not inicio or not fin:
             return create_empty_chart(), [], []
 
@@ -30,8 +31,8 @@ def register_dashboard_callbacks(app):
         cluster_df = get_cluster_usage()
 
         jobs_filtrado = filter_jobs_by_date(jobs_df, inicio, fin)
-        print(f"Stage: {state}")
-        jobs_filtrado = filter_jobs_by_state(jobs_filtrado, state)
+        # print(f"Stage: {state}")
+        # jobs_filtrado = filter_jobs_by_state(jobs_filtrado, state)
 
 
         subprocess_id = int(subprocess)

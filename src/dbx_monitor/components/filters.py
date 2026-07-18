@@ -2,8 +2,6 @@ from datetime import datetime, timedelta
 
 from dash import html
 import dash_mantine_components as dmc
-from src.dbx_monitor.repositories.state_repository import get_state_list
-from src.dbx_monitor.components.states import get_state_options
 from src.dbx_monitor.repositories.subprocess_repository import get_subprocesses
 from src.dbx_monitor.components.subprocesses import get_subprocess_options
 from src.dbx_monitor.repositories.substage_repository import get_substages
@@ -19,8 +17,6 @@ def get_default_date_range() -> tuple[str, str]:
 
 def create_filters():
     fecha_min, fecha_max = get_default_date_range()
-    state_list = get_state_list()
-    state_options = get_state_options(state_list)
     subprocess_list = get_subprocesses()
     subprocess_options = get_subprocess_options(subprocess_list)
     substage_list = get_substages()
@@ -31,11 +27,11 @@ def create_filters():
         [
             html.Div(
                 [
-                    dmc.Text("Fecha/Hora Inicio", fw=500, w=140),
+                    dmc.Text("From:", fw=500, w=60),
                     dmc.DateTimePicker(
-                        id="fecha_inicio",
+                        id="start_date",
                         value=fecha_min,
-                        w=200,
+                        w=150,
                     ),
                 ],
                 style={
@@ -46,11 +42,11 @@ def create_filters():
             ),
             html.Div(
                 [
-                    dmc.Text("Fecha/Hora Fin", fw=500, w=140),
+                    dmc.Text("To:", fw=500, w=60),
                     dmc.DateTimePicker(
-                        id="fecha_fin",
+                        id="end_date",
                         value=fecha_max,
-                        w=200,
+                        w=150,
                     ),
                 ],
                 style={
@@ -59,31 +55,32 @@ def create_filters():
                     "gap": "10px",
                 },
             ),
+            # html.Div(
+            #     [
+            #         dmc.Text("Result"),
+            #         dmc.Select(
+            #             id="state_filter",
+            #             data=state_options,
+            #             value="ALL",
+            #             w=180,
+            #             clearable=False,
+            #         ),
+            #     ],
+            #     style={
+            #         "display": "flex",
+            #         "alignItems": "center",
+            #         "gap": "10px",
+            #     },
+            # ),
             html.Div(
                 [
-                    dmc.Text("Result"),
-                    dmc.Select(
-                        id="state_filter",
-                        data=state_options,
-                        value="ALL",
-                        w=180,
-                        clearable=False,
-                    ),
-                ],
-                style={
-                    "display": "flex",
-                    "alignItems": "center",
-                    "gap": "10px",
-                },
-            ),
-            html.Div(
-                [
-                    dmc.Text("Subprocess"),
+                    dmc.Text("Subprocess:"),
                     dmc.Select(
                         id="subprocess_filter",
                         data=subprocess_options,
                         value="0",
                         w=180,
+                        fw=200,
                         clearable=False,
                     ),
                 ],
@@ -95,13 +92,34 @@ def create_filters():
             ),
             html.Div(
                 [
-                    dmc.Text("Substage"),
+                    dmc.Text("Substage:"),
                     dmc.Select(
                         id="substage_filter",
                         data=substage_options,
                         value="0",
                         w=180,
                         clearable=False,
+                    ),
+                ],
+                style={
+                    "display": "flex",
+                    "alignItems": "center",
+                    "gap": "10px",
+                },
+            ),            
+            html.Div(
+                [
+                    dmc.Text("Folio:"),
+                    dmc.TextInput(
+                        id="folio_filter",
+                        placeholder="Folio number",
+                        w=180,
+                    ),
+                    dmc.Button(
+                        "Search",
+                        id="search_button",
+                        n_clicks=0,
+                        variant="filled",
                     ),
                 ],
                 style={

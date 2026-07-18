@@ -14,7 +14,7 @@ def build_column_defs(columns) -> list[dict]:
         if col == "job_name":
             col_def["minWidth"] = 350
         elif col in ["job_id", "run_id"]:
-            col_def["minWidth"] = 150
+            col_def["minWidth"] = 140
 
         column_defs.append(col_def)
 
@@ -23,7 +23,7 @@ def build_column_defs(columns) -> list[dict]:
 
 def create_jobs_grid(column_defs: list[dict]):
     return dag.AgGrid(
-        id="tabla_jobs",
+        id="jobs_table",
         rowData=[],
         columnDefs=column_defs,
         defaultColDef={

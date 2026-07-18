@@ -3,6 +3,7 @@ import dash_mantine_components as dmc
 
 from src.dbx_monitor.callbacks.dashboard_callbacks import register_dashboard_callbacks
 from src.dbx_monitor.callbacks.export_callbacks import register_export_callbacks
+from src.dbx_monitor.callbacks.search_callbacks import register_search_callbacks
 from src.dbx_monitor.layouts.main_layout import create_layout
 
 
@@ -13,8 +14,9 @@ def create_app() -> Dash:
         create_layout()
     )
 
-    register_dashboard_callbacks(app)
+    # register_dashboard_callbacks(app)
     register_export_callbacks(app)
+    register_search_callbacks(app)
 
     return app
 

@@ -18,7 +18,7 @@ def create_cluster_chart(cluster_stack: pd.DataFrame):
         y="cantidad",
         color="tipo",
         barmode="stack",
-        title="Instancias",
+        title="Cluster metrics",
         color_discrete_map={
             "drivers": "#2563eb",
             "workers": "#22c55e",
@@ -35,8 +35,8 @@ def create_cluster_chart(cluster_stack: pd.DataFrame):
         hovermode="x unified",
         title_x=0.5,
         legend_title_text="",
-        xaxis_title="Hora",
-        yaxis_title="Instancias",
+        xaxis_title="Date",
+        yaxis_title="Instances",
     )
 
     fig.update_yaxes(dtick=1)

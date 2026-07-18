@@ -14,14 +14,14 @@ def create_layout():
     return html.Div(
         [
             dmc.Title(
-                "Dashboard de Pruebas de volumen de Databricks",
+                "Databricks Volume Testing Dashboard",
                 order=1,
             ),
             create_filters(),
             html.Hr(),
             html.Div(
                 dcc.Graph(
-                    id="grafica_cluster",
+                    id="cluster_chart",
                     config={"displaylogo": False},
                 ),
                 style={
@@ -37,12 +37,12 @@ def create_layout():
             html.Div(
                 [
                     dmc.Button(
-                        "Exportar Excel",
+                        "Export",
                         id="btn_exportar_excel",
                         color="#1f2937",
                     ),
                     html.Div(
-                        id="barra_estadisticas",
+                        id="metrics_bar",
                         style={
                             "display": "flex",
                             "alignItems": "center",

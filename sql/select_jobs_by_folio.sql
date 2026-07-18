@@ -22,5 +22,7 @@ left join public.subprocesses sp
 left join public.substages ss
     on
 	r.substage_id = ss.substage_id
+where 
+	cast(r.folio_number as text) ilike %(folio_number)s
 order by
 	started_cdmx;    

@@ -8,11 +8,11 @@ def register_export_callbacks(app):
     @app.callback(
         Output("download-excel", "data"),
         Input("btn_exportar_excel", "n_clicks"),
-        State("fecha_inicio", "value"),
-        State("fecha_fin", "value"),
+        State("start_date", "value"),
+        State("end_date", "value"),
         prevent_initial_call=True,
     )
-    def exportar_excel(n_clicks, inicio, fin):
+    def export_excel(n_clicks, inicio, fin):
         jobs_df = get_jobs()
         jobs_filtrado = filter_jobs_by_date(jobs_df, inicio, fin)
 
