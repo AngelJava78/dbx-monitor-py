@@ -65,3 +65,12 @@ def filter_jobs_by_folio_number(jobs_df: pd.DataFrame, folio_number: str) -> pd.
         return jobs_df.copy()
     
     return jobs_df[jobs_df["folio_number"] == folio_number].copy()
+
+def filter_jobs_by_job_name(jobs_df: pd.DataFrame, job_name: str) -> pd.DataFrame:
+    if jobs_df is None or jobs_df.empty:
+        return pd.DataFrame()
+    
+    if job_name is None or not str(job_name).strip():
+        return jobs_df.copy()
+    
+    return jobs_df[jobs_df["job_name"] == job_name].copy()

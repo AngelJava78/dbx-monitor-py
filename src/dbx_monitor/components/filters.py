@@ -25,96 +25,121 @@ def create_filters():
 
     return html.Div(
         [
+            # Línea 1 de filtros
             html.Div(
                 [
-                    dmc.Text("From:", fw=500, w=60),
-                    dmc.DateTimePicker(
-                        id="start_date",
-                        value=fecha_min,
-                        w=150,
+                    html.Div(
+                        [
+                            dmc.Text("From:", fw=500, w=70),
+                            dmc.DateTimePicker(
+                                id="start_date",
+                                value=fecha_min,
+                                w=190,
+                            ),
+                        ],
+                        style={
+                            "display": "flex",
+                            "alignItems": "center",
+                            "gap": "10px",
+                        },
+                    ),
+
+                    html.Div(
+                        [
+                            dmc.Text("To:", fw=500, w=50),
+                            dmc.DateTimePicker(
+                                id="end_date",
+                                value=fecha_max,
+                                w=190,
+                            ),
+                        ],
+                        style={
+                            "display": "flex",
+                            "alignItems": "center",
+                            "gap": "10px",
+                        },
+                    ),
+
+                    html.Div(
+                        [
+                            dmc.Text("Subprocess:", fw=500),
+                            dmc.Select(
+                                id="subprocess_txt",
+                                data=subprocess_options,
+                                value="0",
+                                w=230,
+                                clearable=False,
+                            ),
+                        ],
+                        style={
+                            "display": "flex",
+                            "alignItems": "center",
+                            "gap": "10px",
+                        },
+                    ),
+
+                    html.Div(
+                        [
+                            dmc.Text("Substage:", fw=500),
+                            dmc.Select(
+                                id="substage_txt",
+                                data=substage_options,
+                                value="0",
+                                w=230,
+                                clearable=False,
+                            ),
+                        ],
+                        style={
+                            "display": "flex",
+                            "alignItems": "center",
+                            "gap": "10px",
+                        },
                     ),
                 ],
                 style={
                     "display": "flex",
+                    "gap": "30px",
                     "alignItems": "center",
-                    "gap": "10px",
+                    "flexWrap": "wrap",
+                    "marginBottom": "12px",
                 },
             ),
+
+            # Línea 2 de filtros
             html.Div(
                 [
-                    dmc.Text("To:", fw=500, w=60),
-                    dmc.DateTimePicker(
-                        id="end_date",
-                        value=fecha_max,
-                        w=150,
+                    html.Div(
+                        [
+                            dmc.Text("Folio:", fw=500, w=70),
+                            dmc.TextInput(
+                                id="folio_txt",
+                                placeholder="Folio number",
+                                w=230,
+                            ),
+                        ],
+                        style={
+                            "display": "flex",
+                            "alignItems": "center",
+                            "gap": "10px",
+                        },
                     ),
-                ],
-                style={
-                    "display": "flex",
-                    "alignItems": "center",
-                    "gap": "10px",
-                },
-            ),
-            # html.Div(
-            #     [
-            #         dmc.Text("Result"),
-            #         dmc.Select(
-            #             id="state_filter",
-            #             data=state_options,
-            #             value="ALL",
-            #             w=180,
-            #             clearable=False,
-            #         ),
-            #     ],
-            #     style={
-            #         "display": "flex",
-            #         "alignItems": "center",
-            #         "gap": "10px",
-            #     },
-            # ),
-            html.Div(
-                [
-                    dmc.Text("Subprocess:"),
-                    dmc.Select(
-                        id="subprocess_filter",
-                        data=subprocess_options,
-                        value="0",
-                        w=180,
-                        fw=200,
-                        clearable=False,
+
+                    html.Div(
+                        [
+                            dmc.Text("Job name:", fw=500, w=80),
+                            dmc.TextInput(
+                                id="job_name_txt",
+                                placeholder="Job name",
+                                w=260,
+                            ),
+                        ],
+                        style={
+                            "display": "flex",
+                            "alignItems": "center",
+                            "gap": "10px",
+                        },
                     ),
-                ],
-                style={
-                    "display": "flex",
-                    "alignItems": "center",
-                    "gap": "10px",
-                },
-            ),
-            html.Div(
-                [
-                    dmc.Text("Substage:"),
-                    dmc.Select(
-                        id="substage_filter",
-                        data=substage_options,
-                        value="0",
-                        w=180,
-                        clearable=False,
-                    ),
-                ],
-                style={
-                    "display": "flex",
-                    "alignItems": "center",
-                    "gap": "10px",
-                },
-            ),            
-            html.Div(
-                [
-                    dmc.Text("Folio:"),
-                    dmc.TextInput(
-                        id="folio_filter",
-                        placeholder="Folio number",
-                        w=180,
-                    ),
+
                     dmc.Button(
                         "Search",
                         id="search_button",
@@ -124,15 +149,17 @@ def create_filters():
                 ],
                 style={
                     "display": "flex",
+                    "gap": "30px",
                     "alignItems": "center",
-                    "gap": "10px",
+                    "flexWrap": "wrap",
+                    "marginBottom": "12px",
                 },
-            ),            
+            ),
         ],
         style={
             "display": "flex",
-            "gap": "30px",
-            "alignItems": "center",
+            "flexDirection": "column",
+            "gap": "4px",
+            "marginBottom": "10px",
         },
     )
-

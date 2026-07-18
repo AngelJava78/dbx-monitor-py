@@ -13,6 +13,15 @@ def build_column_defs(columns) -> list[dict]:
 
         if col == "job_name":
             col_def["minWidth"] = 350
+            col_def["cellStyle"] = {
+                "userSelect": "text",
+                "cursor": "text",
+            }
+        elif col == "folio_number":
+            col_def["cellStyle"] = {
+                "userSelect": "text",
+                "cursor": "text",
+            }
         elif col in ["job_id", "run_id"]:
             col_def["minWidth"] = 140
 

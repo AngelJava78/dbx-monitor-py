@@ -19,8 +19,8 @@ def register_dashboard_callbacks(app):
         Input("start_date", "value"),
         Input("end_date", "value"),
         # Input("state_filter", "value"),
-        Input("subprocess_filter", "value"),
-        Input("substage_filter", "value")
+        Input("subprocess_txt", "value"),
+        Input("substage_txt", "value")
     )
     def refresh_dashboard(inicio, fin, subprocess, substage):
         print("*** Refresh dashboard ***")

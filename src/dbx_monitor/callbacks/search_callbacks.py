@@ -8,7 +8,7 @@ from src.dbx_monitor.services.cluster_service import (
     filter_cluster_by_date,
     prepare_cluster_stack,
 )
-from src.dbx_monitor.services.jobs_service import filter_jobs_by_folio_number, format_jobs_for_grid, filter_jobs_by_state, filter_jobs_by_subprocess_id, filter_jobs_by_substage_id
+from src.dbx_monitor.services.jobs_service import filter_jobs_by_folio_number, format_jobs_for_grid, filter_jobs_by_job_name, filter_jobs_by_subprocess_id, filter_jobs_by_substage_id
 
 
 
@@ -20,17 +20,19 @@ def register_search_callbacks(app):
         Input("search_button", "n_clicks"),
         State("start_date", "value"),
         State("end_date", "value"),
-        State("subprocess_filter", "value"),
-        State("substage_filter", "value"),
-        State("folio_filter", "value"),        
-        prevent_initial_call=True,
+        State("subprocess_txt", "value"),
+        State("substage_txt", "value"),
+        State("folio_txt", "value"),
+        State("job_name_txt", "value")
     )
-    def search(n_clicks, start_date, end_date, subprocess, substage, folio_number):
+    def search(n_clicks, start_date, end_date, subprocess, substage, folio_number, job_name):
         print("*** Folio search ***")
       
         if not start_date or not end_date:
             return create_empty_chart(), [], []
 
+        print(f"Start date: {start_date}")
+        print(f"End date: {end_date}")        
         jobs_df = get_jobs_by_range_of_date(start_date, end_date)
   
         subprocess_id = int(subprocess)
@@ -44,6 +46,8 @@ def register_search_callbacks(app):
         print(f"Folio number: {folio_number}")
         filtered_jobs = filter_jobs_by_folio_number(filtered_jobs, folio_number)
 
+        print(f"Job name: {job_name}")
+        filtered_jobs = filter_jobs_by_job_name(filtered_jobs, job_name)
 
         cluster_df = get_cluster_usage_by_range_of_date(start_date, end_date)
         # cluster_filtrado = filter_cluster_by_date(cluster_df, start_date, end_date)
