@@ -17,3 +17,4 @@ select t.task_run_id,
        t.parameter_source
   from public.tasks t
   where t.run_id = %(run_id)s
+  order by t.started_cdmx

@@ -31,4 +31,4 @@ where
     r.started_cdmx >= %(start_date)s
     and r.started_cdmx <= %(end_date)s
 order by
-    r.started_cdmx desc;
+    r.started_cdmx;
