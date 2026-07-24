@@ -5,6 +5,9 @@ def build_column_defs(columns) -> list[dict]:
     column_defs = []
 
     for col in columns:
+        if col == "run_page_url":
+            continue
+
         col_def = {
             "field": col,
             "sortable": True,
@@ -17,13 +20,29 @@ def build_column_defs(columns) -> list[dict]:
                 "userSelect": "text",
                 "cursor": "text",
             }
+
+        elif col == "duration":
+            col_def["minWidth"] = 100
+            col_def["cellRenderer"] = "RunDurationLink"
+
+        elif col == "job_id":
+            col_def["minWidth"] = 140
+            col_def["cellRenderer"] = "DatabricksJobLink"
+
+        elif col == "run_id":
+            col_def["minWidth"] = 140
+            col_def["cellStyle"] = {
+                "color": "#0563C1",
+                "textDecoration": "underline",
+                "cursor": "pointer",
+                "userSelect": "text",
+            }
         elif col == "folio_number":
             col_def["cellStyle"] = {
                 "userSelect": "text",
                 "cursor": "text",
             }
-        elif col in ["job_id", "run_id"]:
-            col_def["minWidth"] = 140
+
 
         column_defs.append(col_def)
 

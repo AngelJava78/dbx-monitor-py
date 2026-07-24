@@ -3,12 +3,12 @@ import dash_mantine_components as dmc
 
 from src.dbx_monitor.components.filters import create_filters
 from src.dbx_monitor.components.tables import build_column_defs, create_jobs_grid
+from src.dbx_monitor.components.tasks_grid import build_tasks_column_defs, create_tasks_grid
 from src.dbx_monitor.repositories.jobs_repository import get_jobs
 
 
 def create_layout():
     jobs_df = get_jobs()
-
     column_defs = build_column_defs(jobs_df.columns)
 
     return html.Div(
@@ -59,6 +59,18 @@ def create_layout():
                 },
             ),
             create_jobs_grid(column_defs),
+            html.Br(),
+            dmc.Title(
+                "Seleccione un run_id para consultar sus tareas",
+                id="tasks_title",
+                order=3,
+            ),
+
+            dcc.Loading(
+                type="circle",
+                children=create_tasks_grid(),
+            ),
+
             html.Br(),
         ],
         style={"padding": "20px"},
