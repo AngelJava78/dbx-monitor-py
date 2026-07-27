@@ -1,5 +1,6 @@
-from datetime import timedelta
+import logging
 
+import dash_mantine_components as dmc
 import pandas as pd
 from dash import Input, Output, State
 
@@ -23,6 +24,7 @@ from src.dbx_monitor.services.jobs_service import (
     format_jobs_for_grid,
 )
 
+logger = logging.getLogger(__name__)
 
 
 def register_volume_test_callbacks(app):
@@ -44,11 +46,19 @@ def register_volume_test_callbacks(app):
             "n_clicks",
         ),
         State(
+            "volume_start_date",
+            "value",
+        ),
+        State(
+            "volume_end_date",
+            "value",
+        ),
+        State(
             "volume_scenario",
             "value",
         ),
         State(
-            "volume_execution_date",
+            "volume_subprocess",
             "value",
         ),
         State(
@@ -59,66 +69,120 @@ def register_volume_test_callbacks(app):
     )
     def search_volume_tests(
         n_clicks,
+        start_date,
+        end_date,
         scenario_value,
-        execution_date,
+        subprocess_value,
         folio,
     ):
-        if not execution_date:
+        if not start_date or not end_date:
             return (
                 create_empty_chart(),
                 [],
-                [],
+                [
+                    dmc.Alert(
+                        "Start date and end date are required.",
+                        color="red",
+                    )
+                ],
             )
 
-        scenario_id = int(
-            scenario_value or 0
-        )
+        try:
+            scenario_id = int(scenario_value or 0)
 
-        selected_date = pd.to_datetime(
-            execution_date
-        )
+            subprocess_id = int(subprocess_value or 0)
 
-        start_date = selected_date.replace(
-            hour=0,
-            minute=0,
-            second=0,
-            microsecond=0,
-        )
-
-        end_date = start_date + timedelta(days=1)
-
-        jobs_df = get_volume_test_runs(
-            scenario_id=scenario_id,
-            execution_date=execution_date,
-            folio=folio,
-        )
-
-        cluster_df = (
-            get_cluster_usage_by_range_of_date(
+            parsed_start_date = pd.to_datetime(
                 start_date,
-                end_date,
+                errors="raise",
             )
-        )
 
-        cluster_stack = prepare_cluster_stack(
-            cluster_df
-        )
+            parsed_end_date = pd.to_datetime(
+                end_date,
+                errors="raise",
+            )
 
-        chart = create_cluster_chart(
-            cluster_stack
-        )
+            if parsed_start_date >= parsed_end_date:
+                return (
+                    create_empty_chart(),
+                    [],
+                    [
+                        dmc.Alert(
+                            ("The start date must be earlier " "than the end date."),
+                            color="red",
+                        )
+                    ],
+                )
 
-        badges = create_statistics_badges(
-            jobs_df,
-            cluster_df,
-        )
+            jobs_df = get_volume_test_runs(
+                start_date=start_date,
+                end_date=end_date,
+                scenario_id=scenario_id,
+                subprocess_id=subprocess_id,
+                folio=folio,
+            )
 
-        formatted_jobs = format_jobs_for_grid(
-            jobs_df
-        )
+            if jobs_df.empty:
+                return (
+                    create_empty_chart(),
+                    [],
+                    [
+                        dmc.Alert(
+                            ("No executions were found for " "the selected filters."),
+                            color="yellow",
+                        )
+                    ],
+                )
 
-        return (
-            chart,
-            formatted_jobs.to_dict("records"),
-            badges,
-        )
+            cluster_df = get_cluster_usage_by_range_of_date(
+                parsed_start_date.to_pydatetime(),
+                parsed_end_date.to_pydatetime(),
+            )
+
+            cluster_stack = prepare_cluster_stack(cluster_df)
+
+            chart = create_cluster_chart(cluster_stack)
+
+            metrics = create_statistics_badges(
+                jobs_df,
+                cluster_df,
+            )
+
+            formatted_jobs_df = format_jobs_for_grid(jobs_df)
+
+            return (
+                chart,
+                formatted_jobs_df.to_dict("records"),
+                metrics,
+            )
+
+        except (TypeError, ValueError) as exc:
+            logger.warning(
+                "Invalid volume-test filters: %s",
+                exc,
+            )
+
+            return (
+                create_empty_chart(),
+                [],
+                [
+                    dmc.Alert(
+                        str(exc),
+                        color="red",
+                    )
+                ],
+            )
+
+        except Exception:
+            logger.exception("Failed to load volume-test data.")
+
+            return (
+                create_empty_chart(),
+                [],
+                [
+                    dmc.Alert(
+                        ("An error occurred while loading " "the volume-test data."),
+                        color="red",
+                    )
+                ],
+            )

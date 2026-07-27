@@ -1,12 +1,13 @@
 import dash_ag_grid as dag
 import pandas as pd
 
+
 def build_tasks_column_defs(columns) -> list[dict]:
     column_defs = []
 
     for column in columns:
         if column == "run_page_url":
-            continue        
+            continue
         col_def = {
             "field": column,
             "sortable": True,
@@ -33,10 +34,11 @@ def build_tasks_column_defs(columns) -> list[dict]:
     return column_defs
 
 
-
-def create_tasks_grid():
+def create_tasks_grid(
+    grid_id: str = "tasks_table",
+):
     return dag.AgGrid(
-        id="tasks_table",
+        id=grid_id,
         rowData=[],
         columnDefs=[],
         defaultColDef={
@@ -62,6 +64,7 @@ def create_tasks_grid():
             "headerHeight": 32,
         },
     )
+
 
 def format_tasks_for_grid(tasks_df: pd.DataFrame) -> pd.DataFrame:
     formatted_df = tasks_df.copy()

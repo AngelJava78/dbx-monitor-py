@@ -33,6 +33,7 @@ def register_search_callbacks(app):
         State("substage_txt", "value"),
         State("folio_txt", "value"),
         State("job_name_txt", "value"),
+        prevent_initial_call=True,
     )
     def search(
         n_clicks, start_date, end_date, subprocess, substage, folio_number, job_name
@@ -47,7 +48,7 @@ def register_search_callbacks(app):
         jobs_df = get_jobs_by_range_of_date(start_date, end_date)
 
         filtered_jobs = jobs_df.copy()
-        
+
         if subprocess not in (None, ""):
             subprocess_id = int(subprocess)
             print(f"Subprocess: {subprocess_id}")

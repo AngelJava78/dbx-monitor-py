@@ -11,14 +11,30 @@ from src.dbx_monitor.components.tasks_grid import (
 from src.dbx_monitor.components.volume_test_filters import (
     create_volume_test_filters,
 )
-from src.dbx_monitor.repositories.jobs_repository import (
-    get_jobs,
-)
 
+VOLUME_TEST_COLUMNS = [
+    "scenario_description",
+    "subprocess_id",
+    "subprocess_name",
+    "executed_at",
+    "folio",
+    "job_id",
+    "job_name",
+    "run_id",
+    "started_cdmx",
+    "ended_cdmx",
+    "duration",
+    "result_state",
+    "stage_id",
+    "substage_id",
+    "substage_name",
+    "username",
+    "folio_number",
+    "parameter_source",
+]
 
 def create_volume_test_layout():
-    jobs_df = get_jobs()
-    column_defs = build_column_defs(jobs_df.columns)
+    column_defs = build_column_defs(VOLUME_TEST_COLUMNS)
 
     return html.Div(
         [

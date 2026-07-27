@@ -3,7 +3,10 @@ import dash_mantine_components as dmc
 
 from src.dbx_monitor.components.filters import create_filters
 from src.dbx_monitor.components.tables import build_column_defs, create_jobs_grid
-from src.dbx_monitor.components.tasks_grid import build_tasks_column_defs, create_tasks_grid
+from src.dbx_monitor.components.tasks_grid import (
+    build_tasks_column_defs,
+    create_tasks_grid,
+)
 from src.dbx_monitor.repositories.jobs_repository import get_jobs
 
 
@@ -14,7 +17,7 @@ def create_layout():
     return html.Div(
         [
             dmc.Title(
-                "Databricks Volume Testing Dashboard",
+                "Monitor de ejecuciones de Databricks",
                 order=1,
             ),
             create_filters(),
@@ -65,13 +68,11 @@ def create_layout():
                 id="tasks_title",
                 order=3,
             ),
-
             dcc.Loading(
                 type="circle",
                 children=create_tasks_grid(),
             ),
-
             html.Br(),
         ],
-        style={"padding": "20px"},
+        style={"width": "100%"},
     )

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from dash import html
 import dash_mantine_components as dmc
@@ -9,24 +9,61 @@ from src.dbx_monitor.components.test_scenarios import (
 from src.dbx_monitor.repositories.test_scenario_repository import (
     get_test_scenarios,
 )
+from src.dbx_monitor.repositories.subprocess_repository import get_subprocesses
+from src.dbx_monitor.components.subprocesses import get_subprocess_options
+
+
+def get_default_date_range() -> tuple[str, str]:
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    start_date = today - timedelta(days=1)
+    end_date = today - timedelta(milliseconds=1)
+
+    return start_date.isoformat(), end_date.isoformat()
 
 
 def create_volume_test_filters():
+    start_date, end_date = get_default_date_range()
     scenarios_df = get_test_scenarios()
 
     scenario_options = get_test_scenario_options(
         scenarios_df,
     )
 
-    today = datetime.now().replace(
-        hour=0,
-        minute=0,
-        second=0,
-        microsecond=0,
-    )
+    subprocess_list = get_subprocesses()
+    subprocess_options = get_subprocess_options(subprocess_list)
 
     return html.Div(
         [
+            html.Div(
+                [
+                    dmc.Text("From:", fw=500, w=70),
+                    dmc.DateTimePicker(
+                        id="volume_start_date",
+                        value=start_date,
+                        w=190,
+                    ),
+                ],
+                style={
+                    "display": "flex",
+                    "alignItems": "center",
+                    "gap": "10px",
+                },
+            ),
+            html.Div(
+                [
+                    dmc.Text("To:", fw=500, w=50),
+                    dmc.DateTimePicker(
+                        id="volume_end_date",
+                        value=end_date,
+                        w=190,
+                    ),
+                ],
+                style={
+                    "display": "flex",
+                    "alignItems": "center",
+                    "gap": "10px",
+                },
+            ),
             html.Div(
                 [
                     dmc.Text(
@@ -51,15 +88,13 @@ def create_volume_test_filters():
             ),
             html.Div(
                 [
-                    dmc.Text(
-                        "Fecha:",
-                        fw=500,
-                        w=60,
-                    ),
-                    dmc.DateTimePicker(
-                        id="volume_execution_date",
-                        value=today.isoformat(),
-                        w=210,
+                    dmc.Text("Subprocess:", fw=500),
+                    dmc.Select(
+                        id="volume_subprocess",
+                        data=subprocess_options,
+                        value="0",
+                        w=230,
+                        clearable=False,
                     ),
                 ],
                 style={

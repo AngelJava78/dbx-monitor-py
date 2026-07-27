@@ -7,56 +7,70 @@ from src.dbx_monitor.database.queries import load_sql
 
 
 def get_volume_test_runs(
-    scenario_id: int,
-    execution_date: str,
-    folio: str | None,
+    start_date: str,
+    end_date: str,
+    scenario_id: int = 0,
+    subprocess_id: int = 0,
+    folio: str | None = None,
 ) -> pd.DataFrame:
-    if not execution_date:
+    if not start_date or not end_date:
         return pd.DataFrame()
 
-    selected_date = pd.to_datetime(execution_date)
-
-    start_date = selected_date.replace(
-        hour=0,
-        minute=0,
-        second=0,
-        microsecond=0,
+    parsed_start_date = pd.to_datetime(
+        start_date,
+        errors="raise",
     )
 
-    end_date = start_date + timedelta(days=1)
+    parsed_end_date = pd.to_datetime(
+        end_date,
+        errors="raise",
+    )
+
+    if parsed_start_date >= parsed_end_date:
+        raise ValueError("The start date must be earlier than the end date.")
 
     normalized_folio = None
 
     if folio and folio.strip():
         normalized_folio = f"%{folio.strip()}%"
 
-    engine = get_engine()
-    query = load_sql("select_volume_test_runs.sql")
-
     params = {
-        "scenario_id": scenario_id,
-        "start_date": start_date,
-        "end_date": end_date,
+        "start_date": parsed_start_date.to_pydatetime(),
+        "end_date": parsed_end_date.to_pydatetime(),
+        "scenario_id": int(scenario_id or 0),
+        "subprocess_id": int(subprocess_id or 0),
         "folio": normalized_folio,
     }
 
-    df = pd.read_sql(
+    query = load_sql("select_volume_test_runs.sql")
+
+    engine = get_engine()
+
+    jobs_df = pd.read_sql(
         query,
         engine,
         params=params,
     )
 
-    if df.empty:
-        return df
+    if jobs_df.empty:
+        return jobs_df
 
-    df["started_cdmx"] = pd.to_datetime(
-        df["started_cdmx"],
-        errors="coerce",
-    )
+    datetime_columns = [
+        "business_date",
+        "executed_at",
+        "started_cdmx",
+        "ended_cdmx",
+    ]
 
-    df["ended_cdmx"] = pd.to_datetime(
-        df["ended_cdmx"],
-        errors="coerce",
-    )
+    for column in datetime_columns:
+        if column in jobs_df.columns:
+            jobs_df[column] = pd.to_datetime(
+                jobs_df[column],
+                errors="coerce",
+            )
 
-    return df
+    jobs_df["started_cdmx"] = pd.to_datetime(jobs_df["started_cdmx"], errors="coerce")
+    jobs_df["ended_cdmx"] = pd.to_datetime(jobs_df["ended_cdmx"], errors="coerce")
+    jobs_df["executed_at"] = pd.to_datetime(jobs_df["executed_at"], errors="coerce").dt.date
+    
+    return jobs_df
