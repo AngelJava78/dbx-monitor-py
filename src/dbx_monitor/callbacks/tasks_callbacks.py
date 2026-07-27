@@ -14,15 +14,20 @@ from src.dbx_monitor.repositories.tasks_repository import (
 logger = logging.getLogger(__name__)
 
 
-def register_tasks_callbacks(app):
+def register_tasks_callback(
+    app,
+    jobs_grid_id: str,
+    tasks_grid_id: str,
+    tasks_title_id: str,
+):
     logger.warning("Registering tasks callbacks")
 
     @app.callback(
-        Output("tasks_table", "rowData"),
-        Output("tasks_table", "columnDefs"),
-        Output("tasks_title", "children"),
-        Input("jobs_table", "cellClicked"),
-        State("jobs_table", "rowData"),
+        Output(tasks_grid_id, "rowData"),
+        Output(tasks_grid_id, "columnDefs"),
+        Output(tasks_title_id, "children"),
+        Input(jobs_grid_id, "cellClicked"),
+        State(jobs_grid_id, "rowData"),
         prevent_initial_call=True,
     )
     def load_tasks(cell_clicked, jobs_row_data):
@@ -39,15 +44,15 @@ def register_tasks_callbacks(app):
         cell_value = cell_clicked.get("value")
         row_index = cell_clicked.get("rowIndex")
 
-        row_data = cell_clicked.get("data") or {}
+        # row_data = cell_clicked.get("data") or {}
 
-        job_name = row_data.get("job_name", "Unknown")     
+        # job_name = row_data.get("job_name", "Unknown")
 
-        logger.warning(
-            "Clicked column=%s, value=%s",
-            column_id,
-            cell_value,
-        )
+        # logger.warning(
+        #     "Clicked column=%s, value=%s",
+        #     column_id,
+        #     cell_value,
+        # )
 
         if column_id != "run_id":
             logger.warning(
@@ -119,10 +124,26 @@ def register_tasks_callbacks(app):
             )
 
         tasks_df = format_tasks_for_grid(tasks_df)
-        tasks_column_defs = build_tasks_column_defs(tasks_df.columns)
+        column_defs = build_tasks_column_defs(tasks_df.columns)
 
         return (
             tasks_df.to_dict("records"),
-            tasks_column_defs,
+            column_defs,
             f"Tasks for job name: {job_name} | run_id: {run_id}",
         )
+
+
+def register_tasks_callbacks(app):
+    register_tasks_callback(
+        app=app,
+        jobs_grid_id="jobs_table",
+        tasks_grid_id="tasks_table",
+        tasks_title_id="tasks_title",
+    )
+
+    register_tasks_callback(
+        app=app,
+        jobs_grid_id="volume_jobs_table",
+        tasks_grid_id="volume_tasks_table",
+        tasks_title_id="volume_tasks_title",
+    )

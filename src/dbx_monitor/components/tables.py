@@ -37,21 +37,23 @@ def build_column_defs(columns) -> list[dict]:
                 "cursor": "pointer",
                 "userSelect": "text",
             }
-        elif col == "folio_number":
+        elif col in {
+            "folio",
+            "folio_number",
+        }:
             col_def["cellStyle"] = {
                 "userSelect": "text",
                 "cursor": "text",
             }
-
 
         column_defs.append(col_def)
 
     return column_defs
 
 
-def create_jobs_grid(column_defs: list[dict]):
+def create_jobs_grid(column_defs: list[dict], grid_id: str = "jobs_table"):
     return dag.AgGrid(
-        id="jobs_table",
+        id=grid_id,
         rowData=[],
         columnDefs=column_defs,
         defaultColDef={

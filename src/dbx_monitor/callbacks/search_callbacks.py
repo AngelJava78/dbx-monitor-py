@@ -46,6 +46,8 @@ def register_search_callbacks(app):
         print(f"End date: {end_date}")
         jobs_df = get_jobs_by_range_of_date(start_date, end_date)
 
+        filtered_jobs = jobs_df.copy()
+        
         if subprocess not in (None, ""):
             subprocess_id = int(subprocess)
             print(f"Subprocess: {subprocess_id}")
